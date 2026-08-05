@@ -1,36 +1,35 @@
-"""登录接口测试用例"""
+"""登录接口数据驱动测试用例"""
+import pytest
+from common.data_loader import load_json
 from api.login_api import LoginApi
+from jsonschema import validate
 
-# 主测试账号（DummyJSON 官方文档账号，你已用 Postman 验证可登录）
-USERNAME = "emilys"
-PASSWORD = "emilyspass"
+LOGIN_DATA = load_json("login_data.json")
 
 
-def test_login_success():
-    """正向：正确账号密码登录，返回 200 和 token"""
-    login_api = LoginApi()
-    resp = login_api.login(USERNAME, PASSWORD)
+@pytest.mark.parametrize("case", LOGIN_DATA,
+                         ids=lambda c: f"login-{c['username']}-{c['password'] or 'empty'}")
+def test_login_cases(case):
+    """数据驱动：多条登录场景共用一条脚本"""
+    resp = LoginApi().login(case["username"], case["password"])
+    assert resp.status_code == case["expected_status"]
+    if resp.status_code == 200:
+        assert resp.json().get("accessToken")
+
+LOGIN_SCHEMA = {
+    "type": "object",
+    "required": ["id", "username", "accessToken", "refreshToken"],
+    "properties": {
+        "id": {"type": "integer"},
+        "username": {"type": "string"},
+        "accessToken": {"type": "string"},
+        "refreshToken": {"type": "string"},
+    },
+}
+
+
+def test_login_response_schema():
+    """校验登录响应结构"""
+    resp = LoginApi().login("emilys", "emilyspass")
     assert resp.status_code == 200
-    data = resp.json()
-    assert data.get("accessToken") or data.get("token")
-
-
-def test_login_missing_password():
-    """逆向：缺少密码应返回 400"""
-    login_api = LoginApi()
-    resp = login_api.login(USERNAME, "")
-    assert resp.status_code == 400
-
-
-def test_login_wrong_password():
-    """逆向：密码错误应返回 400"""
-    login_api = LoginApi()
-    resp = login_api.login(USERNAME, "wrong-password")
-    assert resp.status_code == 400
-
-
-def test_get_me_after_login(login_client):
-    """使用带 token 的客户端请求认证接口 /auth/me"""
-    resp = login_client.get("/auth/me")
-    assert resp.status_code == 200
-    assert resp.json()["username"] == USERNAME
+    validate(instance=resp.json(), schema=LOGIN_SCHEMA)

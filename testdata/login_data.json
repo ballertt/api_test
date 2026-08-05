@@ -1,0 +1,6 @@
+[
+  {"username": "emilys", "password": "emilyspass", "expected_status": 200},
+  {"username": "emilys", "password": "", "expected_status": 400},
+  {"username": "emilys", "password": "wrongpass", "expected_status": 400},
+  {"username": "notexist", "password": "x", "expected_status": 400}
+]

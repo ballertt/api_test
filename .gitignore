@@ -16,3 +16,7 @@ __pycache__/
 logs/
 reports/
 *.log
+
+# 临时结果文件
+allure-results/
+allure-report/

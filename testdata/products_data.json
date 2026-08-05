@@ -1,0 +1,6 @@
+[
+  {"product_id": 1, "expected_title": "Essence Mascara Lash Princess", "expected_price": 9.99, "expected_status": 200},
+  {"product_id": 2, "expected_title": "Eyeshadow Palette with Mirror", "expected_price": 19.99, "expected_status": 200},
+  {"product_id": 3, "expected_title": "Powder Canister", "expected_price": 14.99, "expected_status": 200},
+  {"product_id": 999999, "expected_title": null, "expected_price": null, "expected_status": 404}
+]

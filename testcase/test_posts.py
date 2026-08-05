@@ -100,7 +100,7 @@ def test_pagination_limit():
 
 # ============ 5. 使用 fixture（共享 Session） ============
 
-def test_get_post_with_session(api_session):
+def test_get_post_with_session(api_client):
     """使用共享 Session 发送请求"""
-    resp = api_session.get(f"{BASE_URL}/posts/1")
+    resp = api_client.get("https://jsonplaceholder.typicode.com/posts/1")
     assert resp.status_code == 200
