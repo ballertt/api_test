@@ -1,4 +1,5 @@
 # 接口自动化测试框架
+ [![CI](https://github.com/ballertt/api_test/actions/workflows/ci.yml/badge.svg)]
 
 基于 Python + pytest + requests 的分层接口自动化测试框架。
 
