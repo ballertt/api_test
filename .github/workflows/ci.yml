@@ -19,7 +19,7 @@ jobs:
 
       - name: 安装依赖
         run: |
-          pip install pytest requests pytest-html responses pytest-xdist
+          pip install -r requirements.txt
 
       - name: 运行测试
         run: pytest testcase/ -n auto --html=reports/report.html --self-contained-html
