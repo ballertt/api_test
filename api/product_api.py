@@ -13,3 +13,7 @@ class ProductApi:
     def list_products(self, limit=10):
         """查询商品列表"""
         return self.client.get("/products", params={"limit": limit})
+
+    def search(self, keyword):
+        """搜索商品"""
+        return self.client.get("/products/search", params={"q": keyword})

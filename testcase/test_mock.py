@@ -2,6 +2,7 @@
 import responses
 from api.product_api import ProductApi
 from api.login_api import LoginApi
+from api.user_api import UserApi
 @responses.activate
 def test_mock_product_detail():
     """Mock：模拟一个还没开发好的商品接口"""
@@ -37,20 +38,26 @@ def test_mock_third_party_api():
     assert resp.json()["status"] == "paid"
 
 @responses.activate
-def test_mock_login_api():
-    """Mock：模拟第三方认证服务 503 不可用"""
+def test_mock_login_service_down():
+    """Mock：模拟登录服务不可用（503）"""
     responses.add(
         responses.POST,
-        "https://auth.example.com/login",
-        json={"error": "Service Unavailable", "message": "Authentication service is temporarily unavailable"},
+        "https://dummyjson.com/auth/login",
+        json={"message": "service down"},
         status=503,
     )
-
-    # 业务代码调用登录接口（实际会被 responses 拦截）
-    login_data={"username": "testuser", "password": "testpass123"}
-    resp = LoginApi().client.post("https://auth.example.com/login", json=login_data)
-
-    # 断言业务代码能正确处理503错误
+    resp = LoginApi().login("emilys", "emilyspass")
     assert resp.status_code == 503
-    assert resp.json()["error"] == "Service Unavailable"
-    assert "temporarily unavailable" in resp.json()["message"]
+
+
+@responses.activate
+def test_mock_user_api_error():
+    """Mock：模拟用户接口 500"""
+    responses.add(
+        responses.GET,
+        "https://dummyjson.com/users/1",
+        json={"message": "internal error"},
+        status=500,
+    )
+    resp = UserApi().get_user(1)
+    assert resp.status_code == 500

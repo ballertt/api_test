@@ -46,3 +46,18 @@ def test_product_response_schema():
     resp = ProductApi().get_product(1)
     assert resp.status_code == 200
     validate(instance=resp.json(), schema=PRODUCT_SCHEMA)
+
+@pytest.mark.parametrize("limit", [1, 5])
+def test_products_limit(limit):
+    """边界：limit 正常小值"""
+    api = ProductApi()
+    resp = api.client.get("/products", params={"limit": limit})
+    assert resp.status_code == 200
+    assert len(resp.json()["products"]) == limit
+
+
+def test_products_limit_zero():
+    """边界：limit=0（返回需实测）"""
+    api = ProductApi()
+    resp = api.client.get("/products", params={"limit": 0})
+    assert resp.status_code in (200, 400)
