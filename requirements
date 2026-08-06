@@ -1,3 +1,7 @@
 pytest
 requests
 pytest-html
+responses
+pytest-xdist
+jsonschema
+allure-pytest
